@@ -1,0 +1,45 @@
+import os
+from googleapiclient.discovery import build
+
+api_key: str = os.getenv('YOUTUBE_APIKEY')
+
+
+class Video:
+    youtube = build('youtube', 'v3', developerKey=api_key)
+
+    def __init__(self, video_id) -> None:
+        """Инициализация класса Video"""
+        self.video_response = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                         id=video_id).execute()
+        self.video_id: str = video_id
+        self.video_title: str = self.video_response['items'][0]['snippet']['title']
+        self.url: str = f'https://www.youtube.com/watch?v={self.video_id}'
+        self.view_count: int = self.video_response['items'][0]['statistics']['viewCount']
+        self.like_count: int = self.video_response['items'][0]['statistics']['likeCount']
+
+    def __str__(self):
+        """Возвращает название видео"""
+        return f"{self.video_title}"
+
+    @classmethod
+    def get_service(cls):
+        """Возвращает объект для работы с YouTube API"""
+        return cls.youtube
+
+
+class PLVideo(Video):
+    def __init__(self, video_id: str, playlist_id: str) -> None:
+        """Инициализация класса PLVideoм - наследника класса Video с добавлением новго атрибута"""
+        super().__init__(video_id)
+        self.playlist_id = playlist_id
+        self.video_response = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
+                                                         id=self.video_id).execute()
+        self.video_title = self.video_response['items'][0]['snippet']['title']
+        self.url = f'https://www.youtube.com/watch?v={self.video_id}'
+        self.view_count = self.video_response['items'][0]['statistics']['viewCount']
+        self.like_count = self.video_response['items'][0]['statistics']['likeCount']
+
+    def __str__(self):
+        """Возвращает название видео"""
+        return f"{self.video_title}"
+
