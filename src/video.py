@@ -29,7 +29,7 @@ class Video:
 
 class PLVideo(Video):
     def __init__(self, video_id: str, playlist_id: str) -> None:
-        """Инициализация класса PLVideoм - наследника класса Video с добавлением новго атрибута"""
+        """Инициализация класса PLVideo - наследника класса Video с добавлением новго атрибута"""
         super().__init__(video_id)
         self.playlist_id = playlist_id
         self.video_response = self.youtube.videos().list(part='snippet,statistics,contentDetails,topicDetails',
